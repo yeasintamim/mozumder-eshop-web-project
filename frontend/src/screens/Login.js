@@ -38,23 +38,31 @@ const Login = ({ location, history }) => {
     <>
       <Header />
       <div className="container d-flex flex-column justify-content-center align-items-center login-center">
+        
         { error && <Message variant="alert-danger">{error} </Message> }
         { loading && <loading /> }
         
         <form 
-        className="Login col-md-8 col-lg-4 col-11" 
-        onSubmit={ submitHandler } 
+          className="Login col-md-8 col-lg-4 col-11" 
+          onSubmit={ submitHandler } 
         >
-          <input type="email" placeholder="Email" 
-          value={email}
-          onChange={(e)=> setEmail(e.target.value)}/>
-          <input type="password" placeholder="Password" 
-          value={password}
-          onChange={(e)=> setPassword(e.target.value)}
+          <input 
+            type="email" placeholder="Email" 
+            value={email}
+            onChange={(e)=> setEmail(e.target.value)}
+          />
+          <input
+            type="password" placeholder="Password" 
+            value={password}
+            onChange={(e)=> setPassword(e.target.value)}
           />
           <button type="submit">Login</button>
           <p>
-            <Link to={redirect ? `/register?redirect=${redirect}`:"/register"}>Create Account</Link>
+            <Link 
+            to={redirect ? `/register?redirect=${redirect}`:"/register"}
+            >
+              Create Account
+            </Link>
           </p>
         </form>
       </div>
