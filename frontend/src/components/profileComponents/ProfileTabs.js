@@ -4,6 +4,7 @@ import Toast from './../LoadingError/Toast';
 import Message from "../LoadingError/Error";
 import Loading from "./../LoadingError/Loading";
 import { toast } from 'react-toastify';
+import { updateUserProfile } from "../../Redux/Actions/userActions";
 
 
 const ProfileTabs = () => {
@@ -23,9 +24,13 @@ const ProfileTabs = () => {
   }
 
   const dispatch = useDispatch();
+
   const userDetails = useSelector((state) => state.userDetails);
   const { loading,error,user } = userDetails;
 
+
+  const userUpdateProfile = useSelector((state) => state.userUpdateProfile);
+  const { loading:updateLoading } = userUpdateProfile;
 
   useEffect(() => {
     if (user) {
@@ -40,16 +45,21 @@ const ProfileTabs = () => {
 
     //password and confirm password should be same
     if (password !== confirmPassword) {
-      toastId.current = toast.error("Password does not match", Toastobjects);
+      if(!toast.isActive(toastId.current)){
+        toastId.current = toast.error("Password does not match", Toastobjects);
+      }
     } else {
-      //update profile
       dispatch(
-        userDetails({
-          name: name,
-          email: email,
-          password: password,
+        updateUserProfile({
+          id: user._id,
+          name,
+          email,
+          password,
         })
       );
+      if(!toast.isActive(toastId.current)){
+        toastId.current = toast.success("Profile Updated", Toastobjects);
+      }
     }
 
   };
@@ -61,6 +71,7 @@ const ProfileTabs = () => {
     <Toast/>
     {error && <Message variant="alert alert-danger">{error}</Message>}
     {loading && <Loading />}
+    {updateLoading && <Loading />}
       <form className="row  form-container" onSubmit={submitHandler}>
         <div className="col-md-6">
           <div className="form">
