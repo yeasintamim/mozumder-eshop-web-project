@@ -28,7 +28,8 @@ const App = () => {
         <Route path="/shipping" component={ShippingScreen} />
         <Route path="/payment" component={PaymentScreen} />
         <Route path="/placeorder" component={PlaceOrderScreen} />
-        <Route path="/order" component={OrderScreen} />
+        <Route path="/order/:id" component={OrderScreen} />
+
         <Route path="*" component={NotFound} />
       </Switch>
     </Router>
