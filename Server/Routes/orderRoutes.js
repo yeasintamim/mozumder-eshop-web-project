@@ -45,6 +45,18 @@ orderRouter.post(
 );
 
 
+//USER LOGIN ORDERS
+orderRouter.get(
+  "/",
+  protect,
+  asyncHandler(async (req, res) => {
+    const order = await Order.find({user: req.user._id}).sort({_id:-1})
+    res.status(200).json(order);
+    
+  })
+);
+
+
 // GET ORDER BY ID
 orderRouter.get(
   "/:id",

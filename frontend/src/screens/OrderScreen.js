@@ -4,20 +4,29 @@ import Header from "./../components/Header";
 import { PayPalButton } from "react-paypal-button-v2";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
-import { getOrderDetails } from "../Redux/Actions/OrderActions";
+import { getOrderDetails, payOrder } from "../Redux/Actions/OrderActions";
 import Loading from "./../components/LoadingError/Loading";
 import Message from "../components/LoadingError/Error";
 import moment from "moment";
+import { useState } from "react";
+import axios from "axios";
+import { ORDER_PAY_RESET } from "../Redux/Constants/OrderConstants";
 
 const OrderScreen = ({ match }) => {
   window.scrollTo(0, 0);
+
+  //sum of two numbers
+  const [sdkReady, setSdkReady] = useState(false);
 
   const orderId = match.params.id;
   const dispatch = useDispatch();
   const orderDetails = useSelector((state) => state.orderDetails);
   const { order, loading, error } = orderDetails;
 
-  //buggy line but kona buddi
+  const orderPay = useSelector((state) => state.orderPay);
+  const { loading: loadingPay, success: successPay } = orderPay;
+
+  //buggy line but kona buddi // video time 5.30hour
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
 
@@ -26,16 +35,40 @@ const OrderScreen = ({ match }) => {
     const addDecimals = (num) => {
       return (Math.round(num * 100) / 100).toFixed(2);
     };
-  
+
     order.itemsPrice = addDecimals(
       order.orderItems.reduce((acc, item) => acc + item.price * item.qty, 0)
     );
-
   }
 
   useEffect(() => {
-    dispatch(getOrderDetails(orderId));
-  }, [dispatch, orderId]);
+    const addPayPalScript = async () => {
+      const { data: clientId } = await axios.get("/api/config/paypal");
+      const script = document.createElement("script");
+      script.type = "text/javascript";
+      script.src = `https://www.paypal.com/sdk/js?client-id=${clientId}`;
+      script.async = true;
+      script.onload = () => {
+        setSdkReady(true);
+      };
+      document.body.appendChild(script);
+    };
+    if (!order || successPay) {
+      dispatch({ type: ORDER_PAY_RESET });
+      dispatch(getOrderDetails(orderId));
+    } else if (!order.isPaid) {
+      if (!window.paypal) {
+        addPayPalScript();
+      } else {
+        setSdkReady(true);
+      }
+    }
+  }, [dispatch, orderId, successPay, order]);
+
+  const successPaymentHandler = (paymentResult) => {
+    console.log(paymentResult);
+    dispatch(payOrder(orderId, paymentResult));
+  };
 
   return (
     <>
@@ -164,42 +197,50 @@ const OrderScreen = ({ match }) => {
                     ))}
                   </>
                 )}
-
-                
               </div>
               {/* total */}
               <div className="col-lg-3 d-flex align-items-end flex-column mt-5 subtotal-order">
                 <table className="table table-bordered">
-                <tbody>
-                <tr>
-                  <td>
-                    <strong>Products</strong>
-                  </td>
-                  <td>${order.itemsPrice}</td>
-                </tr>
-                <tr>
-                  <td>
-                    <strong>Shipping</strong>
-                  </td>
-                  <td>${order.shippingPrice}</td>
-                </tr>
-                <tr>
-                  <td>
-                    <strong>Tax</strong>
-                  </td>
-                  <td>${order.taxPrice}</td>
-                </tr>
-                <tr>
-                  <td>
-                    <strong>Total</strong>
-                  </td>
-                  <td>${order.totalPrice}</td>
-                </tr>
-              </tbody>
+                  <tbody>
+                    <tr>
+                      <td>
+                        <strong>Products</strong>
+                      </td>
+                      <td>${order.itemsPrice}</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <strong>Shipping</strong>
+                      </td>
+                      <td>${order.shippingPrice}</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <strong>Tax</strong>
+                      </td>
+                      <td>${order.taxPrice}</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <strong>Total</strong>
+                      </td>
+                      <td>${order.totalPrice}</td>
+                    </tr>
+                  </tbody>
                 </table>
-                <div className="col-12">
-                  <PayPalButton amount={345} />
-                </div>
+                {!order.isPaid && (
+                  <div className="col-12">
+                    {loadingPay && <Loading />}
+                    {!sdkReady ? (
+                      <Loading />
+                    ) : (
+                      <PayPalButton
+                        amount={order.totalPrice}
+                        onSuccess={successPaymentHandler}
+                      />
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           </>
