@@ -10,21 +10,19 @@ import { listMyOrders } from "../Redux/Actions/OrderActions";
 
 const ProfileScreen = () => {
   window.scrollTo(0, 0);
-  
+
   const dispatch = useDispatch();
 
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
 
-
   const orderListMy = useSelector((state) => state.orderListMy);
-  const { loading,error,orders } = orderListMy;
+  const { loading, error, orders } = orderListMy;
 
   useEffect(() => {
-    dispatch(listMyOrders())
-    dispatch(getUserDetails("profile"))
-
-  },[dispatch])
+    dispatch(listMyOrders());
+    dispatch(getUserDetails("profile"));
+  }, [dispatch]);
 
   return (
     <>
@@ -43,7 +41,7 @@ const ProfileScreen = () => {
                     <strong>{userInfo.name}</strong>
                   </h5>
                   <span className="author-card-position">
-                    <>Joined {moment(userInfo.createdAt).format('LL')}</>
+                    <>Joined {moment(userInfo.createdAt).format("LL")}</>
                   </span>
                 </div>
               </div>
@@ -105,7 +103,7 @@ const ProfileScreen = () => {
               role="tabpanel"
               aria-labelledby="v-pills-profile-tab"
             >
-              <Orders orders={orders} loading={loading} error = {error}/>
+              <Orders orders={orders} loading={loading} error={error} />
             </div>
           </div>
         </div>

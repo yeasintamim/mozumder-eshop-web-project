@@ -3,7 +3,6 @@ import asyncHandler from "express-async-handler";
 import protect from "./../Middleware/AuthMiddleware.js";
 import Order from "./../Models/OrderModel.js";
 
-
 const orderRouter = express.Router();
 
 //CREATE ORDER
@@ -13,7 +12,7 @@ orderRouter.post(
   asyncHandler(async (req, res) => {
     const {
       orderItems,
-      // user :  req.user._id, 
+      // user :  req.user._id,
       shippingAddress,
       paymentMethod,
       itemsPrice,
@@ -22,56 +21,49 @@ orderRouter.post(
       totalPrice,
     } = req.body;
 
-    if ( orderItems && orderItems.length === 0 ) {
+    if (orderItems && orderItems.length === 0) {
       res.status(400);
       throw new Error("No items in cart");
       return;
-    }
-     else {
-        const order = new Order({
-            orderItems,
-            shippingAddress,
-            paymentMethod,
-            itemsPrice, 
-            taxPrice,
-            shippingPrice,
-            totalPrice,
-        });
+    } else {
+      const order = new Order({
+        orderItems,
+        shippingAddress,
+        paymentMethod,
+        itemsPrice,
+        taxPrice,
+        shippingPrice,
+        totalPrice,
+      });
 
-        const createOrder = await order.save();
-        res.status(201).json(createOrder);
+      const createOrder = await order.save();
+      res.status(201).json(createOrder);
     }
   })
 );
-
 
 //USER LOGIN ORDERS
 orderRouter.get(
   "/",
   protect,
   asyncHandler(async (req, res) => {
-    const order = await Order.find({user: req.user._id}).sort({_id:-1})
+    const order = await Order.find({ user: req.user._id }).sort({ _id: -1 });
     res.status(200).json(order);
-    
   })
 );
-
 
 // GET ORDER BY ID
 orderRouter.get(
   "/:id",
   protect,
   asyncHandler(async (req, res) => {
-    
     const order = await Order.findById(req.params.id).populate(
       "user",
       "name email"
-
-    )
-    if(order){
+    );
+    if (order) {
       res.status(200).json(order);
-    }
-    else{
+    } else {
       res.status(404);
       throw new Error("Order not found");
     }
@@ -79,16 +71,13 @@ orderRouter.get(
   })
 );
 
-
-
-
 // UPDATE ORDER TO PAID
 orderRouter.put(
   "/:id/pay",
   protect,
   asyncHandler(async (req, res) => {
     const order = await Order.findById(req.params.id);
-    if(order){
+    if (order) {
       order.isPaid = true;
       order.paidAt = Date.now();
       order.paymentResult = {
@@ -99,11 +88,10 @@ orderRouter.put(
       };
       const updatedOrder = await order.save();
       res.status(200).json(updatedOrder);
-    }
-    else{
+    } else {
       res.status(404);
       throw new Error("Order not found");
     }
   })
-)
+);
 export default orderRouter;

@@ -5,13 +5,13 @@ import ContactInfo from "./../components/homeComponents/ContactInfo";
 import CalltoActionSection from "./../components/homeComponents/CalltoActionSection";
 import Footer from "./../components/Footer";
 
-const HomeScreen = ({match}) => {
+const HomeScreen = ({ match }) => {
   window.scrollTo(0, 0);
-  const keyword = match.params.keyword
+  const keyword = match.params.keyword;
   return (
     <div>
       <Header />
-      <ShopSection keyword = {keyword }/>
+      <ShopSection keyword={keyword} />
       <CalltoActionSection />
       <ContactInfo />
       <Footer />

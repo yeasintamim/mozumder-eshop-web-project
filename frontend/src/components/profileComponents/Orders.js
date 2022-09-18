@@ -4,7 +4,6 @@ import Loading from "../LoadingError/Loading";
 import { Link } from "react-router-dom";
 import moment from "moment";
 
-
 const Orders = (props) => {
   const { loading, error, orders } = props;
 
