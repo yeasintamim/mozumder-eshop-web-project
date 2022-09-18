@@ -5,20 +5,20 @@ const userSchema = mongoose.Schema(
   {
     name: {
       type: String,
-      require: true,
+      required: true,
     },
     email: {
       type: String,
-      require: true,
+      required: true,
       unique: true,
     },
     password: {
       type: String,
-      require: true,
+      required: true,
     },
     isAdmin: {
       type: Boolean,
-      require: true,
+      required: true,
       default: false,
     },
   },
@@ -27,12 +27,12 @@ const userSchema = mongoose.Schema(
   }
 );
 
-//LOGIN
+// Login
 userSchema.methods.matchPassword = async function (enterPassword) {
   return await bcrypt.compare(enterPassword, this.password);
 };
 
-//REGISTER
+// Register
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
     next();
@@ -42,4 +42,5 @@ userSchema.pre("save", async function (next) {
 });
 
 const User = mongoose.model("User", userSchema);
+
 export default User;

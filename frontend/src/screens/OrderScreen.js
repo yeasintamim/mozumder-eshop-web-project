@@ -1,37 +1,29 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link,useLocation } from "react-router-dom";
 import Header from "./../components/Header";
 import { PayPalButton } from "react-paypal-button-v2";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
 import { getOrderDetails, payOrder } from "../Redux/Actions/OrderActions";
 import Loading from "./../components/LoadingError/Loading";
-import Message from "../components/LoadingError/Error";
+import Message from "./../components/LoadingError/Error";
 import moment from "moment";
-import { useState } from "react";
 import axios from "axios";
 import { ORDER_PAY_RESET } from "../Redux/Constants/OrderConstants";
 
 const OrderScreen = ({ match }) => {
   window.scrollTo(0, 0);
-
-  //sum of two numbers
+  const pathname = useLocation().pathname;
   const [sdkReady, setSdkReady] = useState(false);
-
-  const orderId = match.params.id;
+  // const orderId = match.params.id;
+  const orderId = pathname?.split("/")[2];
   const dispatch = useDispatch();
+
   const orderDetails = useSelector((state) => state.orderDetails);
   const { order, loading, error } = orderDetails;
-
   const orderPay = useSelector((state) => state.orderPay);
   const { loading: loadingPay, success: successPay } = orderPay;
 
-  //buggy line but kona buddi // video time 5.30hour
-  const userLogin = useSelector((state) => state.userLogin);
-  const { userInfo } = userLogin;
-
   if (!loading) {
-    //CALCULATE PRICES
     const addDecimals = (num) => {
       return (Math.round(num * 100) / 100).toFixed(2);
     };
@@ -40,6 +32,9 @@ const OrderScreen = ({ match }) => {
       order.orderItems.reduce((acc, item) => acc + item.price * item.qty, 0)
     );
   }
+  useEffect(() => {
+    dispatch(getOrderDetails(orderId));
+  }, [dispatch, orderId]);
 
   useEffect(() => {
     const addPayPalScript = async () => {
@@ -55,7 +50,8 @@ const OrderScreen = ({ match }) => {
     };
     if (!order || successPay) {
       dispatch({ type: ORDER_PAY_RESET });
-      dispatch(getOrderDetails(orderId));
+      // console.log(pathname?.split('/')[2],'ORDER ID')
+      dispatch(getOrderDetails(pathname?.split("/")[2]));
     } else if (!order.isPaid) {
       if (!window.paypal) {
         addPayPalScript();
@@ -63,13 +59,13 @@ const OrderScreen = ({ match }) => {
         setSdkReady(true);
       }
     }
-  }, [dispatch, orderId, successPay, order]);
+  }, [dispatch, pathname, successPay, order]);
 
   const successPaymentHandler = (paymentResult) => {
-    console.log(paymentResult);
-    dispatch(payOrder(orderId, paymentResult));
+    dispatch(payOrder(pathname?.split("/")[2], paymentResult));
   };
 
+  console.log(order, "ORDER");
   return (
     <>
       <Header />
@@ -92,10 +88,11 @@ const OrderScreen = ({ match }) => {
                     <h5>
                       <strong>Customer</strong>
                     </h5>
-                    <p>{userInfo.name}</p> {/* buggy 1 kona buddi*/}
+                    <p>{order.user.name}</p>
                     <p>
-                      <a href={`mailto:${userInfo.email}`}>{userInfo.email}</a>{" "}
-                      {/* buggy 2 kona buddi*/}
+                      <a href={`mailto:${order.user.email}`}>
+                        {order.user.email}
+                      </a>
                     </p>
                   </div>
                 </div>
@@ -114,7 +111,6 @@ const OrderScreen = ({ match }) => {
                     </h5>
                     <p>Shipping: {order.shippingAddress.country}</p>
                     <p>Pay method: {order.paymentMethod}</p>
-
                     {order.isPaid ? (
                       <div className="bg-info p-2 col-12">
                         <p className="text-white text-center text-sm-start">
@@ -144,8 +140,7 @@ const OrderScreen = ({ match }) => {
                       <strong>Deliver to</strong>
                     </h5>
                     <p>
-                      Address:
-                      {order.shippingAddress.city},{" "}
+                      Address: {order.shippingAddress.city},{" "}
                       {order.shippingAddress.address},{" "}
                       {order.shippingAddress.postalCode}
                     </p>

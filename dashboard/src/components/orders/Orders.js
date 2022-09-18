@@ -22,8 +22,10 @@ const Orders = (props) => {
       <tbody>
         {orders.map((order) => (
           <tr key={order._id}>
-            <td>{/* <b>{order.user.name}</b> */}</td>
-            {/* <td>{order.user.email}</td> */}
+            <td>
+              <b>{order.user.name}</b>
+            </td>
+            <td>{order.user.email}</td>
             <td>${order.totalPrice}</td>
             <td>
               {order.isPaid ? (

@@ -16,8 +16,7 @@ import {
   ORDER_PAY_SUCCESS,
 } from "../Constants/OrderConstants";
 
-// Compare this snippet from frontend\src\Redux\Reducers\userReducers.js:
-//CREATE ORDER
+// CREATE ORDER
 export const orderCreateReducer = (state = {}, action) => {
   switch (action.type) {
     case ORDER_CREATE_REQUEST:
@@ -33,14 +32,14 @@ export const orderCreateReducer = (state = {}, action) => {
   }
 };
 
-//ORDER DEATILS
+// ORDER DETAILS
 export const orderDetailsReducer = (
-  state = { loading: true, orderItems: [], shippgAddress: {} },
+  state = { loading: true, orderItems: [], shippingAddress: {} },
   action
 ) => {
   switch (action.type) {
     case ORDER_DETAILS_REQUEST:
-      return { ...state,loading: true };
+      return { ...state, loading: true };
     case ORDER_DETAILS_SUCCESS:
       return { loading: false, order: action.payload };
     case ORDER_DETAILS_FAIL:
@@ -50,12 +49,8 @@ export const orderDetailsReducer = (
   }
 };
 
-
-//ORDER PAY 
-export const orderPayReducer = (
-  state = {},
-  action
-) => {
+// ORDER PAY
+export const orderPayReducer = (state = {}, action) => {
   switch (action.type) {
     case ORDER_PAY_REQUEST:
       return { loading: true };
@@ -70,21 +65,17 @@ export const orderPayReducer = (
   }
 };
 
-
-//USER ORDERS
-export const orderListMyReducer = (
-  state = {orders:{}},
-  action
-) => {
+// USER ORDERS
+export const orderListMyReducer = (state = { orders: [] }, action) => {
   switch (action.type) {
     case ORDER_LIST_MY_REQUEST:
       return { loading: true };
     case ORDER_LIST_MY_SUCCESS:
-      return { loading: false, orders:action.payload };
+      return { loading: false, orders: action.payload };
     case ORDER_LIST_MY_FAIL:
       return { loading: false, error: action.payload };
     case ORDER_LIST_MY_RESET:
-      return {orders:[]};
+      return { orders: [] };
     default:
       return state;
   }

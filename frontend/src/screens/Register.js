@@ -8,7 +8,6 @@ import Header from "./../components/Header";
 
 const Register = ({ location, history }) => {
   window.scrollTo(0, 0);
-
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -17,23 +16,24 @@ const Register = ({ location, history }) => {
   const redirect = location.search ? location.search.split("=")[1] : "/";
 
   const userRegister = useSelector((state) => state.userRegister);
-  const { loading, error, userInfo } = userRegister;
+  const { error, loading, userInfo } = userRegister;
 
   useEffect(() => {
     if (userInfo) {
       history.push(redirect);
     }
-  }, [history, userInfo, redirect]);
+  }, [userInfo, history, redirect]);
 
   const submitHandler = (e) => {
     e.preventDefault();
     dispatch(register(name, email, password));
   };
+
   return (
     <>
       <Header />
       <div className="container d-flex flex-column justify-content-center align-items-center login-center">
-        {error && <Message variant="alert-danger">{error} </Message>}
+        {error && <Message variant="alert-danger">{error}</Message>}
         {loading && <Loading />}
 
         <form

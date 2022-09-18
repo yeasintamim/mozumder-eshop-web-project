@@ -1,8 +1,8 @@
-import React from "react";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { createOrder } from "../Redux/Actions/OrderActions";
+import { ORDER_CREATE_RESET } from "../Redux/Constants/OrderConstants";
 import Header from "./../components/Header";
 import Message from "./../components/LoadingError/Error";
 
@@ -14,7 +14,7 @@ const PlaceOrderScreen = ({ history }) => {
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
 
-  // calculate price
+  // Calculate Price
   const addDecimals = (num) => {
     return (Math.round(num * 100) / 100).toFixed(2);
   };
@@ -22,7 +22,6 @@ const PlaceOrderScreen = ({ history }) => {
   cart.itemsPrice = addDecimals(
     cart.cartItems.reduce((acc, item) => acc + item.price * item.qty, 0)
   );
-
   cart.shippingPrice = addDecimals(cart.itemsPrice > 100 ? 0 : 100);
   cart.taxPrice = addDecimals(Number((0.15 * cart.itemsPrice).toFixed(2)));
   cart.totalPrice = (
@@ -33,16 +32,15 @@ const PlaceOrderScreen = ({ history }) => {
 
   const orderCreate = useSelector((state) => state.orderCreate);
   const { order, success, error } = orderCreate;
+
   useEffect(() => {
     if (success) {
       history.push(`/order/${order._id}`);
-      dispatch({ type: "ORDER_CREATE_RESET" });
+      dispatch({ type: ORDER_CREATE_RESET });
     }
   }, [history, dispatch, success, order]);
 
-  const placeOrderHandler = (e) => {
-    e.preventDefault();
-
+  const placeOrderHandler = () => {
     dispatch(
       createOrder({
         orderItems: cart.cartItems,
@@ -144,7 +142,6 @@ const PlaceOrderScreen = ({ history }) => {
                 ))}
               </>
             )}
-            {/*  */}
           </div>
           {/* total */}
           <div className="col-lg-3 d-flex align-items-end flex-column mt-5 subtotal-order">
@@ -181,7 +178,6 @@ const PlaceOrderScreen = ({ history }) => {
                 PLACE ORDER
               </button>
             )}
-
             {error && (
               <div className="my-3 col-12">
                 <Message variant="alert-danger">{error}</Message>

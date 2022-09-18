@@ -9,10 +9,12 @@ const PaymentScreen = ({ history }) => {
   const cart = useSelector((state) => state.cart);
   const { shippingAddress } = cart;
 
-  if (!shippingAddress.address) {
+  if (!shippingAddress) {
     history.push("/shipping");
   }
+
   const [paymentMethod, setPaymentMethod] = useState("PayPal");
+
   const dispatch = useDispatch();
 
   const submitHandler = (e) => {
@@ -20,7 +22,6 @@ const PaymentScreen = ({ history }) => {
     dispatch(savePaymentMethod(paymentMethod));
     history.push("/placeorder");
   };
-
   return (
     <>
       <Header />

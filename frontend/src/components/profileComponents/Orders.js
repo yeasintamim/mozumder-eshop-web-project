@@ -1,18 +1,16 @@
+import moment from "moment";
 import React from "react";
+import { Link } from "react-router-dom";
 import Message from "../LoadingError/Error";
 import Loading from "../LoadingError/Loading";
-import { Link } from "react-router-dom";
-import moment from "moment";
-
 const Orders = (props) => {
   const { loading, error, orders } = props;
-
   return (
     <div className=" d-flex justify-content-center align-items-center flex-column">
       {loading ? (
         <Loading />
       ) : error ? (
-        <Message varient="alert-danger">{error}</Message>
+        <Message variant="alert-danger">{error}</Message>
       ) : (
         <>
           {orders.length === 0 ? (
@@ -39,7 +37,7 @@ const Orders = (props) => {
                     <th>TOTAL</th>
                   </tr>
                 </thead>
-                {/* <tbody>
+                <tbody>
                   {orders.map((order) => (
                     <tr
                       className={`${
@@ -48,7 +46,7 @@ const Orders = (props) => {
                       key={order._id}
                     >
                       <td>
-                        <a href={`/orders/${order._id}`} className="link">
+                        <a href={`/order/${order._id}`} className="link">
                           {order._id}
                         </a>
                       </td>
@@ -61,7 +59,7 @@ const Orders = (props) => {
                       <td>${order.totalPrice}</td>
                     </tr>
                   ))}
-                </tbody> */}
+                </tbody>
               </table>
             </div>
           )}

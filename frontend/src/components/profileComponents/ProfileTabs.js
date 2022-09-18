@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import Toast from "./../LoadingError/Toast";
 import Message from "../LoadingError/Error";
+import Toast from "./../LoadingError/Toast";
 import Loading from "./../LoadingError/Loading";
 import { toast } from "react-toastify";
 import { updateUserProfile } from "../../Redux/Actions/userActions";
@@ -15,9 +15,9 @@ const ProfileTabs = () => {
 
   const Toastobjects = {
     pauseOnFocusLoss: false,
-    pauseOnHover: false,
     draggable: false,
-    autoclose: 2000, //means 2 seconds
+    pauseOnHover: false,
+    autoClose: 2000,
   };
 
   const dispatch = useDispatch();
@@ -37,31 +37,22 @@ const ProfileTabs = () => {
 
   const submitHandler = (e) => {
     e.preventDefault();
-
-    //password and confirm password should be same
+    // Password match
     if (password !== confirmPassword) {
       if (!toast.isActive(toastId.current)) {
         toastId.current = toast.error("Password does not match", Toastobjects);
       }
     } else {
-      dispatch(
-        updateUserProfile({
-          id: user._id,
-          name,
-          email,
-          password,
-        })
-      );
+      dispatch(updateUserProfile({ id: user._id, name, email, password }));
       if (!toast.isActive(toastId.current)) {
         toastId.current = toast.success("Profile Updated", Toastobjects);
       }
     }
   };
-
   return (
     <>
       <Toast />
-      {error && <Message variant="alert alert-danger">{error}</Message>}
+      {error && <Message variant="alert-danger">{error}</Message>}
       {loading && <Loading />}
       {updateLoading && <Loading />}
       <form className="row  form-container" onSubmit={submitHandler}>
@@ -84,8 +75,8 @@ const ProfileTabs = () => {
             <input
               className="form-control"
               type="email"
-              required
               value={email}
+              required
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
@@ -96,7 +87,6 @@ const ProfileTabs = () => {
             <input
               className="form-control"
               type="password"
-              required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
@@ -108,7 +98,6 @@ const ProfileTabs = () => {
             <input
               className="form-control"
               type="password"
-              required
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
             />

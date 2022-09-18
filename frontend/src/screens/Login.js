@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import Message from "../components/LoadingError/Error";
-import loading from "../components/LoadingError/Loading";
+import Loading from "../components/LoadingError/Loading";
 import Header from "./../components/Header";
 import { login } from "./../Redux/Actions/userActions";
 
@@ -15,27 +15,25 @@ const Login = ({ location, history }) => {
   const redirect = location.search ? location.search.split("=")[1] : "/";
 
   const userLogin = useSelector((state) => state.userLogin);
-  const { loading, error, userInfo } = userLogin;
+  const { error, loading, userInfo } = userLogin;
 
   useEffect(() => {
     if (userInfo) {
       history.push(redirect);
     }
-  }, [history, userInfo, redirect]);
+  }, [userInfo, history, redirect]);
 
   const submitHandler = (e) => {
     e.preventDefault();
     dispatch(login(email, password));
-    // console.log(email, password);
   };
 
   return (
     <>
       <Header />
       <div className="container d-flex flex-column justify-content-center align-items-center login-center">
-        {error && <Message variant="alert-danger">{error} </Message>}
-        {loading && <loading />}
-
+        {error && <Message variant="alert-danger">{error}</Message>}
+        {loading && <Loading />}
         <form
           className="Login col-md-8 col-lg-4 col-11"
           onSubmit={submitHandler}

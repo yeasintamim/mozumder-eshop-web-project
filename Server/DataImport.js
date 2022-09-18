@@ -15,12 +15,13 @@ ImportData.post(
     res.send({ importUser });
   })
 );
+
 ImportData.post(
   "/products",
   asyncHandler(async (req, res) => {
     await Product.remove({});
-    const importProduct = await Product.insertMany(products);
-    res.send({ importProduct });
+    const importProducts = await Product.insertMany(products);
+    res.send({ importProducts });
   })
 );
 

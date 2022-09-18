@@ -1,8 +1,8 @@
-import React from "react";
-import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useState } from "react";
 import { Link, useHistory } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../Redux/Actions/userActions";
+import { clearItemsInCart } from "../Redux/Actions/cartActions";
 
 const Header = () => {
   const [keyword, setKeyword] = useState();
@@ -15,6 +15,7 @@ const Header = () => {
   const { userInfo } = userLogin;
 
   const logoutHandler = () => {
+    dispatch(clearItemsInCart());
     dispatch(logout());
   };
 
@@ -26,7 +27,6 @@ const Header = () => {
       history.push("/");
     }
   };
-
   return (
     <div>
       {/* Top Header */}
@@ -171,7 +171,7 @@ const Header = () => {
                       aria-haspopup="true"
                       aria-expanded="false"
                     >
-                      Hi,{userInfo.name}
+                      Hi, {userInfo.name}
                     </button>
                     <div className="dropdown-menu">
                       <Link className="dropdown-item" to="/profile">
